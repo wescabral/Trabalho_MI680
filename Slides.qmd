@@ -1,0 +1,99 @@
+---
+title: "Multiple Choice"
+subtitle: "Econometrics - Chapter 26"
+author:
+  - "Mateus Lee Yu"
+  - "Wesley Cabral Alves"
+date: today
+
+format:
+  beamer:
+    theme: madrid
+    colortheme: default
+    fonttheme: default
+    pdf-engine: pdflatex
+    slide-level: 2
+    toc: false
+    number-sections: false
+    keep-tex: true
+    beamer-headings: true
+    header-includes:
+    - \setbeamertemplate{section page}{
+        \begin{centering}
+            \begin{beamercolorbox}[sep=12pt,center,shadow=true,rounded=true]{section title}
+            \usebeamerfont{section title}\insertsection\par
+            \end{beamercolorbox}
+        \end{centering}}
+---
+
+##  Introdução  {.unnumbered}
+
+### Resposta Multinomial
+
+- Definição
+- Exemplo
+- Probabilidade de resposta
+
+### Utilidade Latente  
+
+- Modelo de utilidade
+- Identificação do modelo
+
+# Modelos Logit {.unnumbered}
+
+## Logit Multinomial (MNL)
+
+- Definição
+- Erros
+- Probabilidade de resposta
+
+## Logit Condicional
+
+- Definição
+- Erros
+- Restrição de independência de alternativas irrelevantes
+
+## Nested e Mixed Logit
+
+- Definições
+- Peculiaridades
+- Estimação via Monte Carlo
+
+# Modelos Probit {.unnumbered}
+
+## Probit Multinomial
+
+- Definição
+- Erros
+- GHK
+
+## Probit Ordenado
+
+- Definição
+- Erros
+- Exemplos
+
+# Modelos de Contagem {.unnumbered}
+
+## Regressões Poisson e Binomial Negativa
+
+- Definição
+- Particularidades
+
+## Modelo BLP (Nerry, Levinsohn e Parkes)
+
+- Definição (GMM)
+- Erros
+- Exemplos
+
+# Aplicação {.unnumbered}
+
+## Slide com Código
+
+```{r}
+# Seu código R aqui
+x <- 1:100
+y <- x^2
+plot(x, y, main = "Título do Gráfico")
+
+```
