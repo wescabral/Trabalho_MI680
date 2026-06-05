@@ -142,7 +142,7 @@ e estimados substituindo por $\widehat{\gamma}$, $\widehat{P}_{j}(w,x)$ e $\wide
 
 ## Nested Logit
 
-- Independência das Alternativas Irrelevantes é uma propriedade do modelo Logit,
+- Independência das Alternativas Irrelevantes (Independence of Irrelevant Alternative ou IIA) é uma propriedade do modelo Logit,
 \begin{align*}
 \frac{P_{j}(W,X | \beta, \gamma)}{P_{l}(W,X | \beta, \gamma)}
 &= \frac{\exp(W^{'} \beta_{j} + X_{j}^{'} \gamma) / \sum_{k=1}^{J} \exp(w^{'} \beta_{k} + x_{k}^{'} \gamma)}{\exp(W^{'} \beta_{l} + X_{l}^{'} \gamma) / \sum_{k=1}^{J} \exp(w^{'} \beta_{k} + x_{k}^{'} \gamma)} \\
@@ -159,7 +159,39 @@ Agora suponha que uma nova alternativa seja adicionado, ônibus azul ($j=3$) com
 $$
 \frac{P_{2}(W,X | \beta, \gamma)}{P_{3}(W,X | \beta, \gamma)} = 1,
 $$
-e esperamos as probabilidades resposta 50% para carro, 25% para ônibus vermelho e 25% para ônibus azul. Porém, como a inclusão da alternativa não afeta a razão entre as probabilidades de resposta de carro e ônibus vermelho, as novas probabilidades são iguais a 30%.
+e esperamos as probabilidades resposta 50% para carro, 25% para ônibus vermelho e 25% para ônibus azul. Porém, como a inclusão da alternativa não afeta a razão entre as probabilidades de resposta de carro e ônibus vermelho, as novas probabilidades são iguais a 33%.
+
+---
+
+- Para resolver este problema, o modelo Neste Logit divide as alternativas em grupos, onde os alternativas dentro de cada grupo são correlacionadas mas não correlacionadas entre diferentes grupos.
+- O modelo denota $J$ o número de grupos, $N_j$ alternativas no grupo $j$ e "$jk$" representa a alternativa "$k$" do grupo "$j$".
+- A utilidade de $jk$-ésima alternativa é dada por
+$$
+U_{jk}^{*} = W^{'} \beta_{jk} + X_{jk}^{'} \gamma + \epsilon_{jk},
+$$
+onde os erros possuem distribuição GEV generalizada, dada por
+$$
+F(\epsilon_{11}, \dots, \epsilon_{JK_{j}}) = \exp \left( -\sum_{j = 1}^{J} \left[ \sum_{k = 1}^{K_{j}} \exp \left( -\frac{\epsilon_{jk}}{\tau_{j}} \right) \right]^{\tau_{j}} \right).
+$$
+
+---
+
+- Teorema 26.2: Assuma que a utilidade da alternativa "$jk$" seja $U_{jk}^{*} = W^{'} \beta_{jk} + X_{jk}^{'} \gamma + \epsilon_{jk} = \mu_{jk} + \epsilon_{jk}$ e os erros com a distribuição GEV generalizada. Então a probabilidade de resposta será $P_{jk} = P_{k|j}P_{j}$, onde
+$$
+P_{k|j} = \frac{\exp(\mu_{jk} / \tau_{j})}{\sum_{m = 1}^{K_{j}} \exp(\mu_{jm} / \tau_{j})}
+$$
+e
+$$
+P_{j} = \frac{\left( \sum_{m = 1}^{K_{j}} \exp(\mu_{jm} / \tau_{j}) \right)^{\tau_{j}}}{\sum_{l = 1}^{J} \left( \sum_{m = 1}^{K_{l}} \exp(\mu_{lm} / \tau_{l}) \right)^{\tau_{l}}}
+$$
+- A função de log-verossimilhança é dada por
+\begin{align*}
+l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \sum_{k = 1}^{K_{j}} \mathbb{I}(Y_{i} = jk) \left(\right.&\log P_{k|j}(W_{i}, X_{i} | \beta, \gamma) \\
+&+ \log P_{j}(W_{i}, X_{i} | \beta, \gamma) \left.\right)
+\end{align*}
+- O estimador de máxima verossimilhança não tem solução algébrica, então deve ser encontrada numericamante.
+
+
 
 ## Mixed Logit
 
