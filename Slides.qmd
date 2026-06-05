@@ -54,11 +54,19 @@ onde $\beta_{j}$ é o coeficiente e $\epsilon_{j}$ o erro da alternativa $j$.
 
 # Modelo Logit {.unnumbered}
 
+- Definição 26.1: A distribuição de Valor Extremo Tipo I é dado por
+$$
+F(\epsilon) = \exp(-\exp(-\epsilon)).
+$$
 - Definição 26.2: A distribuição conjunta Generalized Extreme Values (GEV) é dado por
 $$
 F(\epsilon_{1}, \dots, \epsilon_{J}) = \exp \left( - \left[ \sum_{j=1}^{J} \exp \left( \frac{\epsilon_{j}}{\tau} \right) \right] \right),
 $$
 onde $0 < \tau \leq 1$.
+- Observação: Quando $\tau = 1$, a distribuição GEV coincide com a distribuição de $(\epsilon_{1}, \dots, \epsilon_{J})$ i.i.d. com distribuição de Valor Extremo Tipo I.
+
+---
+
 - Teorema 26.1: Assuma que a utilidade da alternativa $j$ é dado por $U_{j}^{*} = X^{'} \beta_{j} + \epsilon_{j}$, e o vetor de erros $(\epsilon_{1}, \dots, \epsilon_{J})$ com distribuição GEV. Então, as probabilidades de resposta são dadas por
 $$
 P_{j}(x) = \frac{\exp(x^{'} \beta_{j} / \tau)}{\sum_{l=1}^{J} \exp(x^{'} \beta_{l} / \tau)}.
@@ -102,17 +110,42 @@ $$
 \widehat{\operatorname{AME}}_{j} = \frac{1}{n} \sum_{i=1}^{n} \widehat{\delta}_{j}(X_{i}).
 $$
 
-## Logit Condicional
+## Modelo Logit Condicional
 
-- Definição
-- Erros
-- Restrição de independência de alternativas irrelevantes
+- Exemplo: Suponha que estamos interessados no modo de transporte dos estudantes ("andando", "bicicleta", "ônibus", "trem", "carro"). Diversos fatores influenciam a escolha do modo de transporte, mas principalmente o custo, que depende do indivíduo e das alternativas.
+- O modelo Logit condicional é dado por
+$$
+U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j}.
+$$
+- Sob a suposição de que $(\epsilon_{1}, \dots, \epsilon_{J})$ são i.i.d. com distribuição de Valor Extremo Tipo I. A partir do Teorema 26.1, as probabilidades de resposta são dadas por
+$$
+P_{j}(w,x) = \frac{\exp(w^{'} \beta_{j} + x_{j}^{'} \gamma)}{\sum_{l=1}^{J} \exp(w^{'} \beta_{l} + x_{l}^{'} \gamma)}.
+$$
+
+---
+
+- Para as observações $\{ Y_{i}, W_{i}, X_{i} \}$, onde $X_{i} = \{ X_{1i}, \dots, X_{Ji} \}$, a função de log-verossimilhança é dada por
+$$
+l_{n}(\beta, \gamma) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \gamma).
+$$
+- Novamente o estimador de máxima verossimilhança $\widehat{\beta, \gamma} = \underset{\beta, \gamma}{\operatorname{argmax}} l_{n}(\beta, \gamma)$ não tem solução fechada e deve ser encontrada numericamente.
+- Os efeitos marginais são dados por
+$$
+\delta_{jj}(w,x) = \frac{\partial}{\partial x_{j}} P_{j}(w,x) = \gamma P_{j}(w,x) (1 - P_{j}(w,x))
+$$
+e
+$$
+\delta_{jl}(w,x) = \frac{\partial}{\partial x_{l}} P_{j}(w,x) = -\gamma P_{j}(w,x) P_{l}(w,x) \quad \text{para $j \neq l$},
+$$
+e estimados substituindo por $\widehat{\gamma}$, $\widehat{P}_{j}(w,x)$ e $\widehat{P}_{l}(w,x)$.
+- A média do efeito marginal, $\operatorname{AME}_{j} = \mathbb{E}[\delta_{j}(X)]$, é estimador pela média de $\delta_{jl}(w_{i},x_{i})$.
 
 ## Nested e Mixed Logit
 
-- Definições
-- Peculiaridades
-- Estimação via Monte Carlo
+- Independência das Alternativas Irrelevantes
+
+
+
 
 # Modelos Probit {.unnumbered}
 
