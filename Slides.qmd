@@ -8,7 +8,7 @@ date: today
 
 format:
   beamer:
-    theme: madrid
+    theme: Madrid
     colortheme: default
     fonttheme: default
     pdf-engine: pdflatex
@@ -26,26 +26,81 @@ format:
         \end{centering}}
 ---
 
-##  Introdução  {.unnumbered}
+#  Introdução  {.unnumbered}
 
-### Resposta Multinomial
+## Resposta Multinomial
 
-- Definição
-- Exemplo
-- Probabilidade de resposta
+- Definição: O par $(Y, X)$ é uma resposta multinomial quando $X \in \mathbb{R}^{k}$ e $Y$ é multinomial, ou seja, $Y$ pertence a um conjunto finito de alternativas ($Y \in \{1, \dots, J \}$).
+- Probabilidade de resposta: É a distribuição condicional de $Y$ dado $X$,
+$$
+P_{j}(x) = \mathbb{P}[Y=j | X=x].
+$$
+- Exemplo: $Y$ o estado civil ("casado", "divorciado", "separado", "nunca casado") e $X$ a idade.
+- A resposta multinomial é motivado e derivado pelo modelo de utilidade latente.
 
-### Utilidade Latente  
+---
 
-- Modelo de utilidade
-- Identificação do modelo
+## Modelo de Utilidade Latente
 
-# Modelos Logit {.unnumbered}
+- A utilidade da alternativa $j$ é dado por
+$$
+U_{j}^{*} = X^{'} \beta_{j} + \epsilon_{j},
+$$
+onde $\beta_{j}$ é o coeficiente e $\epsilon_{j}$ o erro da alternativa $j$.
+- No modelo de utilidade latente, o indivíduo assume a alternativa com maior utilidade, ou seja, $Y=j$ se $U_{j}^{*} \geq U_{l}^{*}$ para todo $l$.
+- Se somarmos $X^{'} \gamma$ para cada utilidade a escolha da alternativa não muda, logo os coeficientes $\beta_{j}$ não são separadamente identificados.
+- Portanto, escolhemos uma alternativa base $j$ e fixamos $\beta_{j} = 0$ para que a diferença dos coeficientes $\beta_{j} - \beta_{l}$ seja identificado.
+- Os dois modelos de respostas multinomiais clássicos são os modelos Logit e Probit.
 
-## Logit Multinomial (MNL)
+# Modelo Logit {.unnumbered}
 
-- Definição
-- Erros
-- Probabilidade de resposta
+- Definição 26.2: A distribuição conjunta Generalized Extreme Values (GEV) é dado por
+$$
+F(\epsilon_{1}, \dots, \epsilon_{J}) = \exp \left( - \left[ \sum_{j=1}^{J} \exp \left( \frac{\epsilon_{j}}{\tau} \right) \right] \right),
+$$
+onde $0 < \tau \leq 1$.
+- Teorema 26.1: Assuma que a utilidade da alternativa $j$ é dado por $U_{j}^{*} = X^{'} \beta_{j} + \epsilon_{j}$, e o vetor de erros $(\epsilon_{1}, \dots, \epsilon_{J})$ com distribuição GEV. Então, as probabilidades de resposta são dadas por
+$$
+P_{j}(x) = \frac{\exp(x^{'} \beta_{j} / \tau)}{\sum_{l=1}^{J} \exp(x^{'} \beta_{l} / \tau)}.
+$$
+- Por conveniência algébrica utilizamos $\tau = 1$.
+- Definição: O modelo simples Logit é dado por
+$$
+P_{j}(x) = \frac{\exp(x^{'} \beta_{j})}{\sum_{l=1}^{J} \exp(x^{'} \beta_{l})}.
+$$
+
+---
+
+## Estimação
+
+- Para a observação $\{ Y_{i}, X_{i} \}$ e coeficientes $\beta = (\beta_{1}, \dots, \beta_{J})$, temos que a função de distribuição
+$$
+\pi(Y_{i} | X_{i}, \beta) = \prod_{j=1}^{J} P_{j}(X_{i} | \beta)^{\mathbf{I}\{ Y_{i} = j \}}.
+$$
+- Então a função de log-verossimilhança é dada por
+$$
+l_{n}(\beta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(X_{i} | \beta).
+$$
+- O estimador de máxima verossimilhança, $\widehat{\beta} = \underset{\beta}{\operatorname{argmax}} l_{n}(\beta)$, não tem solução fechada, portanto deve ser encontrada numericamente.
+- Observe que a função de verossimilhança é côncava, então a maximização é direta.
+
+---
+
+## Interpretação
+
+- Os coeficientes são difíceis de interpretar, portanto na prática utilizamos os efeitos marginais.
+- O efeito marginal da alternativa $j$ é dado por
+$$
+\delta_{j}(x) = \frac{\partial}{\partial x} P_{j}(x) = P_{j}(x) \left( \beta_{j} - \sum_{l=1}^{J} \beta_{l} P_{l}(x) \right),
+$$
+e estimador por
+$$
+\widehat{\delta}_{j}(x) = \widehat{P}_{j}(x) \left( \widehat{\beta}_{j} - \sum_{l=1}^{J} \widehat{\beta}_{l} \widehat{P}_{l}(x) \right).
+$$
+- E a média do efeito marginal, $\operatorname{AME}_{j} = \mathbb{E}[\delta_{j}(X)]$, é estimador por
+$$
+\widehat{\operatorname{AME}}_{j} = \frac{1}{n} \sum_{i=1}^{n} \widehat{\delta}_{j}(X_{i}).
+$$
 
 ## Logit Condicional
 
