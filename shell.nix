@@ -1,11 +1,5 @@
 { pkgs ? import <nixpkgs> {} }:
 
-# let
-#   tex = pkgs.texlive.combine {
-#     inherit (pkgs.texlive)
-#       scheme-full
-#       beamer;
-#   };
 pkgs.mkShell {
   buildInputs = with pkgs; [
   texliveFull
@@ -14,6 +8,7 @@ pkgs.mkShell {
     (rWrapper.override {
       packages = with rPackages; [
         languageserver
+        mlogit
       ];
     })
   ];
