@@ -140,9 +140,28 @@ $$
 e estimados substituindo por $\widehat{\gamma}$, $\widehat{P}_{j}(w,x)$ e $\widehat{P}_{l}(w,x)$.
 - A média do efeito marginal, $\operatorname{AME}_{j} = \mathbb{E}[\delta_{j}(X)]$, é estimador pela média de $\delta_{jl}(w_{i},x_{i})$.
 
-## Nested e Mixed Logit
+## Nested Logit
 
-- Independência das Alternativas Irrelevantes
+- Independência das Alternativas Irrelevantes é uma propriedade do modelo Logit,
+\begin{align*}
+\frac{P_{j}(W,X | \beta, \gamma)}{P_{l}(W,X | \beta, \gamma)}
+&= \frac{\exp(W^{'} \beta_{j} + X_{j}^{'} \gamma) / \sum_{k=1}^{J} \exp(w^{'} \beta_{k} + x_{k}^{'} \gamma)}{\exp(W^{'} \beta_{l} + X_{l}^{'} \gamma) / \sum_{k=1}^{J} \exp(w^{'} \beta_{k} + x_{k}^{'} \gamma)} \\
+&= \frac{\exp(W^{'} \beta_{j} + X_{j}^{'} \gamma)}{\exp(W^{'} \beta_{l} + X_{l}^{'} \gamma)}.
+\end{align*}
+
+---
+
+- Problema Clássico: Suponha que as alternativas de transporte carro ($j=1$) e ônibus vermelho ($j=2$) tem probabilidades de resposta iguais a 50%, ou seja,
+$$
+\frac{P_{1}(W,X | \beta, \gamma)}{P_{2}(W,X | \beta, \gamma)} = 1.
+$$
+Agora suponha que uma nova alternativa seja adicionado, ônibus azul ($j=3$) com as mesmas características do ônibus vermelho, então
+$$
+\frac{P_{2}(W,X | \beta, \gamma)}{P_{3}(W,X | \beta, \gamma)} = 1,
+$$
+e esperamos as probabilidades resposta 50% para carro, 25% para ônibus vermelho e 25% para ônibus azul. Porém, como a inclusão da alternativa não afeta a razão entre as probabilidades de resposta de carro e ônibus vermelho, as novas probabilidades são iguais a 30%.
+
+## Mixed Logit
 
 
 
