@@ -191,9 +191,40 @@ l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \sum_{k = 1}^{K_{j}} \m
 \end{align*}
 - O estimador de máxima verossimilhança não tem solução algébrica, então deve ser encontrada numericamante.
 
-
-
 ## Mixed Logit
+
+- O modelo Mixed Logit generaliza o modelo Logit Condicional, $U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j}$, substituindo $\gamma$ por $\eta$,
+$$
+U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \eta + \epsilon_{j},
+$$
+onde $\eta$ é uma variável aleatória com distribuição $F(\eta | \alpha$.
+- Permite que as variáveis sejam heterogêneos entre diferentes indivíduos.
+- A escolha da distribuição mais comum é a Normal com matriz de covariância diagonal, Normal e Log-Normal.
+- Também é possível dividir $X_{j}^{*}$ em variáveis sem o coeficiente aleatória, para simplificar o modelo.
+
+---
+
+- Condicionado em $\eta$, a probabilidades de resposta são
+$$
+P_{j}(w, x | \eta) = \frac{\exp(w^{'} \beta_{j} + x_{j}^{'} \eta)}{\sum_{l = 1}^{J} \exp(w^{'} \beta_{l} + x_{l}^{'} \eta)}.
+$$
+- E as probabilidades não condicionadas são encontradas integrando
+$$
+P_{j}(w, x) = \int P_{j}(w, x | \eta) \d F(\eta | \alpha),
+$$
+que não tem solução fechada.
+
+---
+
+- Usualmente são calculadas através de integração de Monte Carlo. A partir de uma amostra pseudo-aleatória $\{ \eta_{1}, \dots, \eta_{G} \}$ de $F(\eta | \alpha)$, o estimador será
+$$
+\widetilde{P}_{j}(w,x) = \frac{1}{G} \sum_{g = 1}^{G} P_{j}(w,x | \eta_{g}).
+$$
+- A integração de Monte Carlo é computacionalmente mais eficiente para $\eta$ de dimensão maior ou iqual a 3, e é computacionalmente intenso para o modelo Logit Condicional sem a aleatoriedade.
+- A função de log-verossimilhança é dada por
+$$
+l_{n}(\beta, \eta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \eta).
+$$
 
 
 
