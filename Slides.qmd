@@ -210,7 +210,7 @@ $$
 \widetilde{P}_{j}(w,x) = \frac{1}{G} \sum_{g = 1}^{G} P_{j}(w,x | \eta_{g}).
 $$
 - Observação: A integração de Monte Carlo é computacionalmente mais intenso do que o modelo Logit Condicional sem a aleatoriedade.
-- A função de log-verossimilhança é dada por
+- A função de log-verossimilhança é
 $$
 l_{n}(\beta, \eta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \eta).
 $$
@@ -219,8 +219,34 @@ $$
 
 ## Modelo Probit Multinomial Simples
 
+- O modelo Probit Multinomial Simples é idêntico ao modelo Logit Condicional
+$$
+U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j},
+$$
+onde $\epsilon_{1}, \dots, \epsilon_{J}$ são i.i.d. com distribuição $\mathcal{N}(0, 1)$.
+- A probabilidade de resposta é
+$$
+P_{j}(W, X) = \int_{-\infty}^{\infty} \prod_{l \neq j} \Phi \left( W^{'}(\beta_{j} - \beta_{l}) + (X_{j} - X_{l})^{'}\gamma + v \right) \phi(v) dv,
+$$
+onde $\Phi(v)$ e $\phi(v)$ são, respectivamente, as funções de distribuição acumulada e densidade da distribuição normal.
+
+## Estimação
+
+- A função de log-verossimilhança é
+$$
+l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \gamma).
+$$
+- Os estimadores de máxima verossimilhança $\widehat{\beta}, \widehat{\gamma} = \underset{\beta, \gamma}{\operatorname{argmax}} l_{n}(\beta, \gamma)$ não possuem solução fechada, portanto devem ser encontradas numericamente.
+
 ## Modelo Probit Multinomial Geral
 
+- O modelo Probit Multinomial Geral é também é idêntico ao modelo Logit Condicional
+$$
+U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j},
+$$
+onde $(\epsilon_{1}, \dots, \epsilon_{J})$ tem distribuição $\mathcal{N}(0, \Sigma)$.
+- As probabilidades de respostas involvem integrais complexas, e integrais numéricas são computacionalmente intensos.
+- O simulador de máxima verossimilhança GHK (Geweke, Hajivassiliou, and Keane) é uma das alternativas para encontrar estimativas dos parâmetros.
 
 
 

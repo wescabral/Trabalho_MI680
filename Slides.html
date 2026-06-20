@@ -340,7 +340,7 @@ P_{j}(w, x | \eta) = \frac{\exp(w^{'} \beta_{j} + x_{j}^{'} \eta)}{\sum_{l = 1}^
 \widetilde{P}_{j}(w,x) = \frac{1}{G} \sum_{g = 1}^{G} P_{j}(w,x | \eta_{g}).
 \]</span></li>
 <li>Observação: A integração de Monte Carlo é computacionalmente mais intenso do que o modelo Logit Condicional sem a aleatoriedade.</li>
-<li>A função de log-verossimilhança é dada por <span class="math display">\[
+<li>A função de log-verossimilhança é <span class="math display">\[
 l_{n}(\beta, \eta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \eta).
 \]</span></li>
 </ul>
@@ -352,9 +352,33 @@ l_{n}(\beta, \eta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \lo
 </section>
 <section id="modelo-probit-multinomial-simples" class="slide level2">
 <h2>Modelo Probit Multinomial Simples</h2>
+<ul>
+<li>O modelo Probit Multinomial Simples é idêntico ao modelo Logit Condicional <span class="math display">\[
+U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j},
+\]</span> onde <span class="math inline">\(\epsilon_{1}, \dots, \epsilon_{J}\)</span> são i.i.d. com distribuição <span class="math inline">\(\mathcal{N}(0, 1)\)</span>.</li>
+<li>A probabilidade de resposta é <span class="math display">\[
+P_{j}(W, X) = \int_{-\infty}^{\infty} \prod_{l \neq j} \Phi \left( W^{'}(\beta_{j} - \beta_{l}) + (X_{j} - X_{l})^{'}\gamma + v \right) \phi(v) dv,
+\]</span> onde <span class="math inline">\(\Phi(v)\)</span> e <span class="math inline">\(\phi(v)\)</span> são, respectivamente, as funções de distribuição acumulada e densidade da distribuição normal.</li>
+</ul>
+</section>
+<section id="estimação-3" class="slide level2">
+<h2>Estimação</h2>
+<ul>
+<li>A função de log-verossimilhança é <span class="math display">\[
+l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \gamma).
+\]</span></li>
+<li>Os estimadores de máxima verossimilhança <span class="math inline">\(\widehat{\beta}, \widehat{\gamma} = \underset{\beta, \gamma}{\operatorname{argmax}} l_{n}(\beta, \gamma)\)</span> não possuem solução fechada, portanto devem ser encontradas numericamente.</li>
+</ul>
 </section>
 <section id="modelo-probit-multinomial-geral" class="slide level2">
 <h2>Modelo Probit Multinomial Geral</h2>
+<ul>
+<li>O modelo Probit Multinomial Geral é também é idêntico ao modelo Logit Condicional <span class="math display">\[
+U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j},
+\]</span> onde <span class="math inline">\((\epsilon_{1}, \dots, \epsilon_{J})\)</span> tem distribuição <span class="math inline">\(\mathcal{N}(0, \Sigma)\)</span>.</li>
+<li>As probabilidades de respostas involvem integrais complexas, e integrais numéricas são computacionalmente intensos.</li>
+<li>O simulador de máxima verossimilhança GHK (Geweke, Hajivassiliou, and Keane) é uma das alternativas para encontrar estimativas dos parâmetros.</li>
+</ul>
 </section>
 <section id="resposta-ordenada" class="slide level2">
 <h2>Resposta Ordenada</h2>
