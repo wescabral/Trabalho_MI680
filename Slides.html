@@ -6,12 +6,12 @@
 <script src="Slides_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="Slides_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="Slides_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="Slides_files/libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.34">
+<link href="Slides_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Mateus Lee Yu">
   <meta name="author" content="Wesley Cabral Alves">
-  <meta name="dcterms.date" content="2026-06-19">
+  <meta name="dcterms.date" content="2026-06-20">
   <title>Multiple Choice</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -31,7 +31,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="Slides_files/libs/revealjs/dist/theme/quarto-9ce82ae522829553451b478701577363.css">
+  <link rel="stylesheet" href="Slides_files/libs/revealjs/dist/theme/quarto-180480240cd5cf313f31ffc61479362a.css">
   <link href="Slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="Slides_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="Slides_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -145,7 +145,7 @@ Wesley Cabral Alves
 </div>
 </div>
 
-  <p class="date">2026-06-19</p>
+  <p class="date">2026-06-20</p>
 </section>
 <section>
 <section id="introdução" class="title-slide slide level1 unnumbered center">
@@ -382,6 +382,30 @@ U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j},
 </section>
 <section id="resposta-ordenada" class="slide level2">
 <h2>Resposta Ordenada</h2>
+<ul>
+<li>Para que a natureza ordinal da variável resposta possa ser respeitada, é usada a estrutura de variável latente.</li>
+</ul>
+<p><span class="math display">\[
+U^* = X'\beta + \epsilon
+\newline
+\epsilon \sim G
+\]</span> - Em que <span class="math inline">\(X\)</span> não inclui intercepto e <span class="math inline">\(Y\)</span> é definido pela presença de <span class="math inline">\(U*\)</span> em thresholds ordenados <span class="math inline">\(\alpha_1 &lt;\alpha_2&lt;\dots&lt;\alpha_{j-1}\)</span></p>
+<ul>
+<li>Considerando <span class="math inline">\(\alpha_0 = -\infty\)</span> e <span class="math inline">\(\alpha_j = \infty\)</span> temos essa relação denotada como:</li>
+</ul>
+<p><span class="math display">\[
+Y = j;\ \alpha_{j-1} &lt; U^* \leq \alpha_j
+\]</span> ## Resposta Ordenada</p>
+<ul>
+<li><p>A distribuição do erro <span class="math inline">\(\epsilon\)</span> geralmente é conhecida. O modelo é chamado “Ordered Probit” quando esta é normal e “Ordered Logit” quando logística.</p></li>
+<li><p>A probabilidade de observar a alternativa <span class="math inline">\(j\)</span> dado <span class="math inline">\(x\)</span> é a diferença entre as distribuições acumuladas nos thresholds adjacentes.</p></li>
+</ul>
+<p><span class="math display">\[
+P_j(x) = G(\alpha_j-X'\beta) - G(\alpha_{j-1}-X'\beta)
+\]</span> - Dada a amostra <span class="math inline">\({Y_i, X_i}\)</span>, os parâmetros são inferidos por máxima verossimilhança:</p>
+<p><span class="math display">\[
+\mathcal{l_n}(\theta) = \sum^n_{i=1}\sum^J_{j=1}\mathbf{I} \{ Y_i=j \}\log P_j(X_i|\theta)
+\]</span></p>
 </section>
 <section id="resposta-de-contagem" class="slide level2">
 <h2>Resposta de Contagem</h2>
@@ -588,7 +612,7 @@ U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j},
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -615,42 +639,80 @@ U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j},
       });
     </script>
     
+
     <script>
+
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
       // slide changes (different for each slide format).
+
       (function () {
+
         // dispatch for htmlwidgets
+
         function fireSlideEnter() {
+
           const event = window.document.createEvent("Event");
+
           event.initEvent("slideenter", true, true);
+
           window.document.dispatchEvent(event);
+
         }
+
+    
 
         function fireSlideChanged(previousSlide, currentSlide) {
+
           fireSlideEnter();
 
+    
+
           // dispatch for shiny
+
           if (window.jQuery) {
+
             if (previousSlide) {
+
               window.jQuery(previousSlide).trigger("hidden");
+
             }
+
             if (currentSlide) {
+
               window.jQuery(currentSlide).trigger("shown");
+
             }
+
           }
+
         }
+
+    
 
         // hookup for slidy
+
         if (window.w3c_slidy) {
+
           window.w3c_slidy.add_observer(function (slide_num) {
+
             // slide_num starts at position 1
+
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
           });
+
         }
 
+    
+
       })();
+
     </script>
+
+    
 
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -700,13 +762,14 @@ U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j},
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy

@@ -252,6 +252,35 @@ onde $(\epsilon_{1}, \dots, \epsilon_{J})$ tem distribuição $\mathcal{N}(0, \S
 
 ## Resposta Ordenada
 
+- Para que a natureza ordinal da variável resposta possa ser respeitada, é usada a estrutura de variável latente.
+
+$$
+U^* = X'\beta + \epsilon
+\newline
+\epsilon \sim G
+$$
+- Em que $X$ não inclui intercepto e $Y$ é definido pela presença de $U*$ em thresholds ordenados $\alpha_1 <\alpha_2<\dots<\alpha_{j-1}$
+
+- Considerando $\alpha_0 = -\infty$ e $\alpha_j = \infty$ temos essa relação denotada como:
+
+$$
+Y = j;\ \alpha_{j-1} < U^* \leq \alpha_j
+$$
+## Resposta Ordenada
+
+- A distribuição do erro $\epsilon$ geralmente é conhecida. O modelo é chamado "Ordered Probit" quando esta é normal e "Ordered Logit" quando logística.
+
+- A probabilidade de observar a alternativa $j$ dado $x$ é a diferença entre as distribuições acumuladas nos thresholds adjacentes.
+
+$$
+P_j(x) = G(\alpha_j-X'\beta) - G(\alpha_{j-1}-X'\beta)
+$$
+- Dada a amostra ${Y_i, X_i}$, os parâmetros são inferidos por máxima verossimilhança:
+
+$$
+\mathcal{l_n}(\theta) = \sum^n_{i=1}\sum^J_{j=1}\mathbf{I} \{ Y_i=j \}\log P_j(X_i|\theta)
+$$
+
 ## Resposta de Contagem
 
 ## Modelo BLP (Nerry, Levinsohn e Parkes)
