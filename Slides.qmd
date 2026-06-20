@@ -7,52 +7,40 @@ author:
 date: today
 
 format:
-  beamer:
-    theme: Madrid
-    colortheme: default
-    fonttheme: default
-    pdf-engine: pdflatex
-    slide-level: 2
+  revealjs:
+    theme: default
+    slide-number: true
     toc: false
     number-sections: false
-    keep-tex: true
-    beamer-headings: true
-    header-includes:
-    - \setbeamertemplate{section page}{
-        \begin{centering}
-            \begin{beamercolorbox}[sep=12pt,center,shadow=true,rounded=true]{section title}
-            \usebeamerfont{section title}\insertsection\par
-            \end{beamercolorbox}
-        \end{centering}}
+    transition: slide
+    slide-level: 2
+    fontsize: 30px
 ---
 
-#  Introdução  {.unnumbered}
+# Introdução {.unnumbered}
 
 ## Resposta Multinomial
 
-- Definição: O par $(Y, X)$ é uma resposta multinomial quando $X \in \mathbb{R}^{k}$ e $Y$ é multinomial, ou seja, $Y$ pertence a um conjunto finito de alternativas ($Y \in \{1, \dots, J \}$).
-- Probabilidade de resposta: É a distribuição condicional de $Y$ dado $X$,
+- Definição (Resposta Multinomial): O par $(Y, X)$ é uma resposta multinomial quando $X \in \mathbb{R}^{k}$ e $Y$ é multinomial, ou seja, $Y$ pertence a um conjunto finito de alternativas ($Y \in \{1, \dots, J \}$).
+- Exemplo: $Y$ o estado civil ("casado", "divorciado", "separado", "nunca casado") e $X$ a idade de uma pessoa.
+- Definição (Probabilidade de Resposta): É a distribuição condicional de $Y$ dado $X$,
 $$
 P_{j}(x) = \mathbb{P}[Y=j | X=x].
 $$
-- Exemplo: $Y$ o estado civil ("casado", "divorciado", "separado", "nunca casado") e $X$ a idade.
-- A resposta multinomial é motivado e derivado pelo modelo de utilidade latente.
-
----
+- A resposta multinomial é motiva o Modelo de Utilidade Latente.
 
 ## Modelo de Utilidade Latente
 
-- A utilidade da alternativa $j$ é dado por
+- No Modelo de Utilidade Latente, o indivíduo assume a alternativa com maior utilidade, ou seja, $Y=j$ se $U_{j}^{*} > U_{l}^{*}$ para todo $l \neq j$.
+- A utilidade da $j$-ésima alternativa é
 $$
 U_{j}^{*} = X^{'} \beta_{j} + \epsilon_{j},
 $$
 onde $\beta_{j}$ é o coeficiente e $\epsilon_{j}$ o erro da alternativa $j$.
-- No modelo de utilidade latente, o indivíduo assume a alternativa com maior utilidade, ou seja, $Y=j$ se $U_{j}^{*} \geq U_{l}^{*}$ para todo $l$.
-- Se somarmos $X^{'} \gamma$ para cada utilidade a escolha da alternativa não muda, logo os coeficientes $\beta_{j}$ não são separadamente identificados.
-- Portanto, escolhemos uma alternativa base $j$ e fixamos $\beta_{j} = 0$ para que a diferença dos coeficientes $\beta_{j} - \beta_{l}$ seja identificado.
+- Observação: Os coeficientes $\beta_{j}$ não são separadamente identificados. Portanto fixamos $\beta_{j} = 0$, para que a diferença dos coeficientes $\beta_{j} - \beta_{l}$ seja identificado.
 - Os dois modelos de respostas multinomiais clássicos são os modelos Logit e Probit.
 
-# Modelo Logit {.unnumbered}
+# Modelo Logit
 
 - Definição 26.1: A distribuição de Valor Extremo Tipo I é dado por
 $$
@@ -63,41 +51,36 @@ $$
 F(\epsilon_{1}, \dots, \epsilon_{J}) = \exp \left( - \left[ \sum_{j=1}^{J} \exp \left( \frac{\epsilon_{j}}{\tau} \right) \right] \right),
 $$
 onde $0 < \tau \leq 1$.
-- Observação: Quando $\tau = 1$, a distribuição GEV coincide com a distribuição de $(\epsilon_{1}, \dots, \epsilon_{J})$ i.i.d. com distribuição de Valor Extremo Tipo I.
+- Observação: Quando $\tau = 1$, a distribuição GEV coincide com a distribuição de $(\epsilon_{1}, \dots, \epsilon_{J})$, onde $\epsilon_{1}, \dots, \epsilon_{J}$ são i.i.d. com distribuição de Valor Extremo Tipo I.
 
----
+## Modelo Simples Logit
 
-- Teorema 26.1: Assuma que a utilidade da alternativa $j$ é dado por $U_{j}^{*} = X^{'} \beta_{j} + \epsilon_{j}$, e o vetor de erros $(\epsilon_{1}, \dots, \epsilon_{J})$ com distribuição GEV. Então, as probabilidades de resposta são dadas por
+- Teorema 26.1: Assuma que a utilidade da alternativa $j$ é dado por $U_{j}^{*} = X^{'} \beta_{j} + \epsilon_{j}$, e o vetor de erros $(\epsilon_{1}, \dots, \epsilon_{J})$ com distribuição GEV. Então, as probabilidades de resposta são
 $$
 P_{j}(x) = \frac{\exp(x^{'} \beta_{j} / \tau)}{\sum_{l=1}^{J} \exp(x^{'} \beta_{l} / \tau)}.
 $$
-- Por conveniência algébrica utilizamos $\tau = 1$.
-- Definição: O modelo simples Logit é dado por
+- Observação: Por conveniência algébrica, utilizamos $\tau = 1$.
+- Definição: O Modelo Simples Logit é dado por
 $$
 P_{j}(x) = \frac{\exp(x^{'} \beta_{j})}{\sum_{l=1}^{J} \exp(x^{'} \beta_{l})}.
 $$
 
----
-
 ## Estimação
 
-- Para a observação $\{ Y_{i}, X_{i} \}$ e coeficientes $\beta = (\beta_{1}, \dots, \beta_{J})$, temos que a função de distribuição
+- Para cada $i$-ésima observação $\{ Y_{i}, X_{i} \}$ e coeficientes $\beta = (\beta_{1}, \dots, \beta_{J})$, temos que a função de distribuição
 $$
 \pi(Y_{i} | X_{i}, \beta) = \prod_{j=1}^{J} P_{j}(X_{i} | \beta)^{\mathbf{I}\{ Y_{i} = j \}}.
 $$
-- Então a função de log-verossimilhança é dada por
+- A função de log-verossimilhança é
 $$
 l_{n}(\beta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(X_{i} | \beta).
 $$
-- O estimador de máxima verossimilhança, $\widehat{\beta} = \underset{\beta}{\operatorname{argmax}} l_{n}(\beta)$, não tem solução fechada, portanto deve ser encontrada numericamente.
-- Observe que a função de verossimilhança é côncava, então a maximização é direta.
-
----
+- O estimador de máxima verossimilhança $\widehat{\beta} = \underset{\beta}{\operatorname{argmax}} l_{n}(\beta)$ não tem solução fechada, portanto deve ser encontrada numericamente.
+- Observação: A função de verossimilhança é côncava, então a maximização é direta.
 
 ## Interpretação
 
-- Os coeficientes são difíceis de interpretar, portanto na prática utilizamos os efeitos marginais.
-- O efeito marginal da alternativa $j$ é dado por
+- O efeito marginal da alternativa $j$ é
 $$
 \delta_{j}(x) = \frac{\partial}{\partial x} P_{j}(x) = P_{j}(x) \left( \beta_{j} - \sum_{l=1}^{J} \beta_{l} P_{l}(x) \right),
 $$
@@ -105,7 +88,7 @@ e estimador por
 $$
 \widehat{\delta}_{j}(x) = \widehat{P}_{j}(x) \left( \widehat{\beta}_{j} - \sum_{l=1}^{J} \widehat{\beta}_{l} \widehat{P}_{l}(x) \right).
 $$
-- E a média do efeito marginal, $\operatorname{AME}_{j} = \mathbb{E}[\delta_{j}(X)]$, é estimador por
+- A média do efeito marginal (Average Marginal Effect) é $\operatorname{AME}_{j} = \mathbb{E}[\delta_{j}(X)]$ e estimador por
 $$
 \widehat{\operatorname{AME}}_{j} = \frac{1}{n} \sum_{i=1}^{n} \widehat{\delta}_{j}(X_{i}).
 $$
@@ -113,23 +96,26 @@ $$
 ## Modelo Logit Condicional
 
 - Exemplo: Suponha que estamos interessados no modo de transporte dos estudantes ("andando", "bicicleta", "ônibus", "trem", "carro"). Diversos fatores influenciam a escolha do modo de transporte, mas principalmente o custo, que depende do indivíduo e das alternativas.
-- O modelo Logit condicional é dado por
+- O Modelo Logit Condicional é dado por
 $$
 U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j}.
 $$
-- Sob a suposição de que $(\epsilon_{1}, \dots, \epsilon_{J})$ são i.i.d. com distribuição de Valor Extremo Tipo I. A partir do Teorema 26.1, as probabilidades de resposta são dadas por
+- Sob a suposição de que $\epsilon_{1}, \dots, \epsilon_{J}$ são i.i.d. com distribuição de Valor Extremo Tipo I. A partir do Teorema 26.1, as probabilidades de resposta são dadas por
 $$
 P_{j}(w,x) = \frac{\exp(w^{'} \beta_{j} + x_{j}^{'} \gamma)}{\sum_{l=1}^{J} \exp(w^{'} \beta_{l} + x_{l}^{'} \gamma)}.
 $$
 
----
+## Estimação
 
-- Para as observações $\{ Y_{i}, W_{i}, X_{i} \}$, onde $X_{i} = \{ X_{1i}, \dots, X_{Ji} \}$, a função de log-verossimilhança é dada por
+- Para cada $i$-ésima observação $\{ Y_{i}, W_{i}, X_{i} \}$, onde $X_{i} = \{ X_{1i}, \dots, X_{Ji} \}$, a função de log-verossimilhança é
 $$
 l_{n}(\beta, \gamma) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \gamma).
 $$
-- Novamente o estimador de máxima verossimilhança $\widehat{\beta, \gamma} = \underset{\beta, \gamma}{\operatorname{argmax}} l_{n}(\beta, \gamma)$ não tem solução fechada e deve ser encontrada numericamente.
-- Os efeitos marginais são dados por
+- Os estimadores de máxima verossimilhança $\widehat{\beta}, \widehat{\gamma} = \underset{\beta, \gamma}{\operatorname{argmax}} l_{n}(\beta, \gamma)$ não possuem solução fechada, portanto devem ser encontradas numericamente.
+
+## Interpretação
+
+- Os efeitos marginais é
 $$
 \delta_{jj}(w,x) = \frac{\partial}{\partial x_{j}} P_{j}(w,x) = \gamma P_{j}(w,x) (1 - P_{j}(w,x))
 $$
@@ -138,32 +124,33 @@ $$
 \delta_{jl}(w,x) = \frac{\partial}{\partial x_{l}} P_{j}(w,x) = -\gamma P_{j}(w,x) P_{l}(w,x) \quad \text{para $j \neq l$},
 $$
 e estimados substituindo por $\widehat{\gamma}$, $\widehat{P}_{j}(w,x)$ e $\widehat{P}_{l}(w,x)$.
-- A média do efeito marginal, $\operatorname{AME}_{j} = \mathbb{E}[\delta_{j}(X)]$, é estimador pela média de $\delta_{jl}(w_{i},x_{i})$.
+- A média do efeito marginal é $\operatorname{AME}_{jl} = \mathbb{E}[\delta_{jl}(X)]$, e estimador pela média de $\delta_{jl}(w_{i},x_{i})$.
 
-## Nested Logit
+## Independência das Alternativas Irrelevantes
 
-- Independência das Alternativas Irrelevantes (Independence of Irrelevant Alternative ou IIA) é uma propriedade do modelo Logit,
-\begin{align*}
+- A Independência das Alternativas Irrelevantes (Independence of Irrelevant Alternative ou IIA) é uma propriedade do modelo Logit, uma restrição sobre a razão das probabilidades de resposta,
+$$
 \frac{P_{j}(W,X | \beta, \gamma)}{P_{l}(W,X | \beta, \gamma)}
-&= \frac{\exp(W^{'} \beta_{j} + X_{j}^{'} \gamma) / \sum_{k=1}^{J} \exp(w^{'} \beta_{k} + x_{k}^{'} \gamma)}{\exp(W^{'} \beta_{l} + X_{l}^{'} \gamma) / \sum_{k=1}^{J} \exp(w^{'} \beta_{k} + x_{k}^{'} \gamma)} \\
-&= \frac{\exp(W^{'} \beta_{j} + X_{j}^{'} \gamma)}{\exp(W^{'} \beta_{l} + X_{l}^{'} \gamma)}.
-\end{align*}
+= \frac{\frac{\exp(W^{'} \beta_{j} + X_{j}^{'} \gamma)}{\sum_{k=1}^{J} \exp(w^{'} \beta_{k} + x_{k}^{'} \gamma)}}{\frac{\exp(W^{'} \beta_{l} + X_{l}^{'} \gamma)}{\sum_{k=1}^{J} \exp(w^{'} \beta_{k} + x_{k}^{'} \gamma)}}
+= \frac{\exp(W^{'} \beta_{j} + X_{j}^{'} \gamma)}{\exp(W^{'} \beta_{l} + X_{l}^{'} \gamma)}.
+$$
 
----
+## Exemplo Clássico
 
-- Problema Clássico: Suponha que as alternativas de transporte carro ($j=1$) e ônibus vermelho ($j=2$) tem probabilidades de resposta iguais a 50%, ou seja,
+- Suponha que as alternativas de transporte carro ($j=1$) e ônibus vermelho ($j=2$) tem probabilidades de resposta iguais a 50%, ou seja,
 $$
 \frac{P_{1}(W,X | \beta, \gamma)}{P_{2}(W,X | \beta, \gamma)} = 1.
 $$
-Agora suponha que uma nova alternativa seja adicionado, ônibus azul ($j=3$) com as mesmas características do ônibus vermelho, então
+- Agora suponha que uma nova alternativa seja adicionado, ônibus azul ($j=3$) com as mesmas características do ônibus vermelho, então
 $$
 \frac{P_{2}(W,X | \beta, \gamma)}{P_{3}(W,X | \beta, \gamma)} = 1,
 $$
-e esperamos as probabilidades resposta 50% para carro, 25% para ônibus vermelho e 25% para ônibus azul. Porém, como a inclusão da alternativa não afeta a razão entre as probabilidades de resposta de carro e ônibus vermelho, as novas probabilidades são iguais a 33%.
+- Então, esperamos as probabilidades resposta 50% para carro, 25% para ônibus vermelho e 25% para ônibus azul.
+- Portanto, como a inclusão da alternativa não deveria afetar a razão entre as probabilidades de resposta de carro e ônibus vermelho, as novas probabilidades são iguais a 33%.
 
----
+## Modelo Nested Logit
 
-- Para resolver este problema, o modelo Neste Logit divide as alternativas em grupos, onde os alternativas dentro de cada grupo são correlacionadas mas não correlacionadas entre diferentes grupos.
+- Para resolver este problema, o modelo Nested Logit divide as alternativas em grupos, onde os alternativas dentro de cada grupo são correlacionadas mas não correlacionadas entre diferentes grupos.
 - O modelo denota $J$ o número de grupos, $N_j$ alternativas no grupo $j$ e "$jk$" representa a alternativa "$k$" do grupo "$j$".
 - A utilidade de $jk$-ésima alternativa é dada por
 $$
@@ -182,81 +169,68 @@ P_{k|j} = \frac{\exp(\mu_{jk} / \tau_{j})}{\sum_{m = 1}^{K_{j}} \exp(\mu_{jm} / 
 $$
 e
 $$
-P_{j} = \frac{\left( \sum_{m = 1}^{K_{j}} \exp(\mu_{jm} / \tau_{j}) \right)^{\tau_{j}}}{\sum_{l = 1}^{J} \left( \sum_{m = 1}^{K_{l}} \exp(\mu_{lm} / \tau_{l}) \right)^{\tau_{l}}}
+P_{j} = \frac{\left( \sum_{m = 1}^{K_{j}} \exp(\mu_{jm} / \tau_{j}) \right)^{\tau_{j}}}{\sum_{l = 1}^{J} \left( \sum_{m = 1}^{K_{l}} \exp(\mu_{lm} / \tau_{l}) \right)^{\tau_{l}}}.
 $$
-- A função de log-verossimilhança é dada por
-\begin{align*}
-l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \sum_{k = 1}^{K_{j}} \mathbb{I}(Y_{i} = jk) \left(\right.&\log P_{k|j}(W_{i}, X_{i} | \beta, \gamma) \\
-&+ \log P_{j}(W_{i}, X_{i} | \beta, \gamma) \left.\right)
-\end{align*}
-- O estimador de máxima verossimilhança não tem solução algébrica, então deve ser encontrada numericamante.
 
-## Mixed Logit
+## Estimação
+
+- A função de log-verossimilhança é
+$$
+l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \sum_{k = 1}^{K_{j}} \mathbb{I}(Y_{i} = jk) \left(\right.\log P_{k|j}(W_{i}, X_{i} | \beta, \gamma) + \log P_{j}(W_{i}, X_{i} | \beta, \gamma) \left.\right)
+$$
+- Os estimadores de máxima verossimilhança $\widehat{\beta}, \widehat{\gamma} = \underset{\beta, \gamma}{\operatorname{argmax}} l_{n}(\beta, \gamma)$ não possuem solução fechada, portanto devem ser encontradas numericamente.
+
+## Modelo Mixed Logit
 
 - O modelo Mixed Logit generaliza o modelo Logit Condicional, $U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \gamma + \epsilon_{j}$, substituindo $\gamma$ por $\eta$,
 $$
 U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \eta + \epsilon_{j},
 $$
-onde $\eta$ é uma variável aleatória com distribuição $F(\eta | \alpha$.
+onde $\eta$ é uma variável aleatória com distribuição $F(\eta | \alpha)$.
 - Permite que as variáveis sejam heterogêneos entre diferentes indivíduos.
-- A escolha da distribuição mais comum é a Normal com matriz de covariância diagonal, Normal e Log-Normal.
-- Também é possível dividir $X_{j}^{*}$ em variáveis sem o coeficiente aleatória, para simplificar o modelo.
+- As escolhas das distribuições mais comuns são: $\mathcal{N}(\gamma, D)$ (matriz de covariância diagonal), $\mathcal{N}(\gamma, \Sigma)$ e Log-Normal.
+- Observação: É possível simplificar o modelo dividindo $X_{j}^{'}$ em variáveis sem e com o coeficiente aleatório.
 
 ---
 
-- Condicionado em $\eta$, a probabilidades de resposta são
+- As probabilidades de resposta são
+$$
+P_{j}(w, x) = \int P_{j}(w, x | \eta) d F(\eta | \alpha),
+$$
+onde
 $$
 P_{j}(w, x | \eta) = \frac{\exp(w^{'} \beta_{j} + x_{j}^{'} \eta)}{\sum_{l = 1}^{J} \exp(w^{'} \beta_{l} + x_{l}^{'} \eta)}.
 $$
-- E as probabilidades não condicionadas são encontradas integrando
-$$
-P_{j}(w, x) = \int P_{j}(w, x | \eta) \d F(\eta | \alpha),
-$$
-que não tem solução fechada.
+- A integrais não possuem solução fechada, portanto são encontradas por integração de Monte Carlo.
 
 ---
 
-- Usualmente são calculadas através de integração de Monte Carlo. A partir de uma amostra pseudo-aleatória $\{ \eta_{1}, \dots, \eta_{G} \}$ de $F(\eta | \alpha)$, o estimador será
+- Dada uma amostra pseudo-aleatória $\{ \eta_{1}, \dots, \eta_{G} \}$ de $F(\eta | \alpha)$, o estimador é
 $$
 \widetilde{P}_{j}(w,x) = \frac{1}{G} \sum_{g = 1}^{G} P_{j}(w,x | \eta_{g}).
 $$
-- A integração de Monte Carlo é computacionalmente mais eficiente para $\eta$ de dimensão maior ou iqual a 3, e é computacionalmente intenso para o modelo Logit Condicional sem a aleatoriedade.
+- Observação: A integração de Monte Carlo é computacionalmente mais intenso do que o modelo Logit Condicional sem a aleatoriedade.
 - A função de log-verossimilhança é dada por
 $$
 l_{n}(\beta, \eta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \eta).
 $$
 
+# Modelo Probit
+
+## Modelo Probit Multinomial Simples
+
+## Modelo Probit Multinomial Geral
 
 
 
-# Modelos Probit {.unnumbered}
 
-## Probit Multinomial
+## Resposta Ordenada
 
-- Definição
-- Erros
-- GHK
-
-## Probit Ordenado
-
-- Definição
-- Erros
-- Exemplos
-
-# Modelos de Contagem {.unnumbered}
-
-## Regressões Poisson e Binomial Negativa
-
-- Definição
-- Particularidades
+## Resposta de Contagem
 
 ## Modelo BLP (Nerry, Levinsohn e Parkes)
 
-- Definição (GMM)
-- Erros
-- Exemplos
-
-# Aplicação {.unnumbered}
+# Aplicação
 
 ## Slide com Código
 
