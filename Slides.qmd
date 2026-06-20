@@ -15,9 +15,20 @@ format:
     transition: slide
     slide-level: 2
     fontsize: 30px
+
+execute:
+  echo: true
+  eval: true
+  output: true
 ---
 
 # Introdução {.unnumbered}
+
+```{r}
+Sys.which("R")
+R.home()
+.libPaths()
+```
 
 ## Resposta Multinomial
 
@@ -69,11 +80,11 @@ $$
 
 - Para cada $i$-ésima observação $\{ Y_{i}, X_{i} \}$ e coeficientes $\beta = (\beta_{1}, \dots, \beta_{J})$, temos que a função de distribuição
 $$
-\pi(Y_{i} | X_{i}, \beta) = \prod_{j=1}^{J} P_{j}(X_{i} | \beta)^{\mathbf{I}\{ Y_{i} = j \}}.
+\pi(Y_{i} | X_{i}, \beta) = \prod_{j=1}^{J} P_{j}(X_{i} | \beta)^{\mathbf{1}\{ Y_{i} = j \}}.
 $$
 - A função de log-verossimilhança é
 $$
-l_{n}(\beta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(X_{i} | \beta).
+l_{n}(\beta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{1}\{ Y_{i} = j \} \log P_{j}(X_{i} | \beta).
 $$
 - O estimador de máxima verossimilhança $\widehat{\beta} = \underset{\beta}{\operatorname{argmax}} l_{n}(\beta)$ não tem solução fechada, portanto deve ser encontrada numericamente.
 - Observação: A função de verossimilhança é côncava, então a maximização é direta.
@@ -109,7 +120,7 @@ $$
 
 - Para cada $i$-ésima observação $\{ Y_{i}, W_{i}, X_{i} \}$, onde $X_{i} = \{ X_{1i}, \dots, X_{Ji} \}$, a função de log-verossimilhança é
 $$
-l_{n}(\beta, \gamma) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \gamma).
+l_{n}(\beta, \gamma) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{1}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \gamma).
 $$
 - Os estimadores de máxima verossimilhança $\widehat{\beta}, \widehat{\gamma} = \underset{\beta, \gamma}{\operatorname{argmax}} l_{n}(\beta, \gamma)$ não possuem solução fechada, portanto devem ser encontradas numericamente.
 
@@ -176,7 +187,7 @@ $$
 
 - A função de log-verossimilhança é
 $$
-l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \sum_{k = 1}^{K_{j}} \mathbb{I}(Y_{i} = jk) \left(\right.\log P_{k|j}(W_{i}, X_{i} | \beta, \gamma) + \log P_{j}(W_{i}, X_{i} | \beta, \gamma) \left.\right)
+l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \sum_{k = 1}^{K_{j}} \mathbf{1}(Y_{i} = jk) \left(\right.\log P_{k|j}(W_{i}, X_{i} | \beta, \gamma) + \log P_{j}(W_{i}, X_{i} | \beta, \gamma) \left.\right)
 $$
 - Os estimadores de máxima verossimilhança $\widehat{\beta}, \widehat{\gamma} = \underset{\beta, \gamma}{\operatorname{argmax}} l_{n}(\beta, \gamma)$ não possuem solução fechada, portanto devem ser encontradas numericamente.
 
@@ -212,8 +223,22 @@ $$
 - Observação: A integração de Monte Carlo é computacionalmente mais intenso do que o modelo Logit Condicional sem a aleatoriedade.
 - A função de log-verossimilhança é
 $$
-l_{n}(\beta, \eta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \eta).
+l_{n}(\beta, \eta) = \sum_{i=1}^{n} \sum_{j=1}^{J} \mathbf{1}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \eta).
 $$
+
+## Aplicação 1
+
+::: {.panel-tabset}
+### R
+```{r}
+print("Hello, World!")
+```
+
+### Julia
+```{julia}
+println("Hello, World!")
+```
+:::
 
 # Modelo Probit
 
@@ -234,7 +259,7 @@ onde $\Phi(v)$ e $\phi(v)$ são, respectivamente, as funções de distribuição
 
 - A função de log-verossimilhança é
 $$
-l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \mathbf{I}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \gamma).
+l_{n}(\beta, \gamma) = \sum_{i = 1}^{n} \sum_{j = 1}^{J} \mathbf{1}\{ Y_{i} = j \} \log P_{j}(W_{i}, X_{i} | \beta, \gamma).
 $$
 - Os estimadores de máxima verossimilhança $\widehat{\beta}, \widehat{\gamma} = \underset{\beta, \gamma}{\operatorname{argmax}} l_{n}(\beta, \gamma)$ não possuem solução fechada, portanto devem ser encontradas numericamente.
 
@@ -247,6 +272,21 @@ $$
 onde $(\epsilon_{1}, \dots, \epsilon_{J})$ tem distribuição $\mathcal{N}(0, \Sigma)$.
 - As probabilidades de respostas involvem integrais complexas, e integrais numéricas são computacionalmente intensos.
 - O simulador de máxima verossimilhança GHK (Geweke, Hajivassiliou, and Keane) é uma das alternativas para encontrar estimativas dos parâmetros.
+
+## Aplicação 2
+
+::: {.panel-tabset}
+### R
+```{r}
+print("Hello, World!")
+```
+
+### Julia
+```{julia}
+println("Hello, World!")
+```
+:::
+
 
 
 
@@ -266,6 +306,7 @@ $$
 $$
 Y = j;\ \alpha_{j-1} < U^* \leq \alpha_j
 $$
+
 ## Resposta Ordenada
 
 - A distribuição do erro $\epsilon$ geralmente é conhecida. O modelo é chamado "Ordered Probit" quando esta é normal e "Ordered Logit" quando logística.
@@ -278,7 +319,7 @@ $$
 - Dada a amostra ${Y_i, X_i}$, os parâmetros são inferidos por máxima verossimilhança:
 
 $$
-\mathcal{l_n}(\theta) = \sum^n_{i=1}\sum^J_{j=1}\mathbf{I} \{ Y_i=j \}\log P_j(X_i|\theta)
+\mathcal{l_n}(\theta) = \sum^n_{i=1}\sum^J_{j=1}\mathbf{1} \{ Y_i=j \}\log P_j(X_i|\theta)
 $$
 
 ## Resposta de Contagem
@@ -294,5 +335,4 @@ $$
 x <- 1:100
 y <- x^2
 plot(x, y, main = "Título do Gráfico")
-
 ```
