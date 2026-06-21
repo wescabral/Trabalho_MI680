@@ -15,6 +15,7 @@ format:
     transition: slide
     slide-level: 2
     fontsize: 30px
+    embed-resources: true
 
 execute:
   echo: true
@@ -22,13 +23,7 @@ execute:
   output: true
 ---
 
-# Introdução {.unnumbered}
-
-```{r}
-Sys.which("R")
-R.home()
-.libPaths()
-```
+# Introdução
 
 ## Resposta Multinomial
 
