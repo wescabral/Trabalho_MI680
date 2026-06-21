@@ -294,6 +294,7 @@ U^* = X'\beta + \epsilon
 \newline
 \epsilon \sim G
 $$
+
 - Em que $X$ não inclui intercepto e $Y$ é definido pela presença de $U*$ em thresholds ordenados $\alpha_1 <\alpha_2<\dots<\alpha_{j-1}$
 
 - Considerando $\alpha_0 = -\infty$ e $\alpha_j = \infty$ temos essa relação denotada como:
@@ -311,6 +312,7 @@ $$
 $$
 P_j(x) = G(\alpha_j-X'\beta) - G(\alpha_{j-1}-X'\beta)
 $$
+
 - Dada a amostra ${Y_i, X_i}$, os parâmetros são inferidos por máxima verossimilhança:
 
 $$
@@ -319,15 +321,20 @@ $$
 
 ## Resposta de Contagem
 
+- Usa como base a Regressão de Poisson:
+
+$$
+P_j(x) = P[Y=j|x] = \frac{e^{-\lambda(x)}\lambda(x)^j}{j!}
+\newline
+\lambda(x) = e^{x'\beta}
+\newline
+E[Y|X] = Var[Y|X] = e^{X'\beta}
+$$
+
+- Os parâmetros são inferidos através de EMV:
+
+$$
+\mathcal{l_n}(\beta) = \sum^n_{i=1}\log P_{Y_i}(X_i|\beta) = \sum^n_{i=1}(-e^{X_i'\beta}+Y_iX_i'\beta-\log(Y_i!))
+$$
+
 ## Modelo BLP (Nerry, Levinsohn e Parkes)
-
-# Aplicação
-
-## Slide com Código
-
-```{r}
-# Seu código R aqui
-x <- 1:100
-y <- x^2
-plot(x, y, main = "Título do Gráfico")
-```
