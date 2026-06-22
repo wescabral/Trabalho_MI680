@@ -338,3 +338,31 @@ $$
 $$
 
 ## Modelo BLP (Nerry, Levinsohn e Parkes)
+
+
+- É a extensão do logit condicional desenvolvido para entender um comportamento geral de escolha entre produtos por um determinado mercado.
+
+- A utilidade que um indivíduo obtém do bem $j$ é calculada coomo no mixed logit:
+
+$$
+U^*_j =X'_j \eta + \xi_j + \epsilon_j
+$$
+em que $X_j$ são as características observáveis do produto, $\eta$ é aleatório (como se fosse preferências entre os indivíduos), enquanto $\xi_j$ e $\epsilon_j$ são características não-observadas a nível de mercado e individual.
+
+
+## Modelo BLP (Nerry, Levinsohn e Parkes)
+
+
+- Para identificabilidade das características de $\xi_j$, é necessário um vetor de instrumentos que satisfaçam:
+
+$$
+E[Z_j\xi_j] = 0
+$$
+
+
+- A probabilidade de escolha é definida como:
+
+$$
+P_j(\delta, \alpha) = \int \frac{e^{(\delta_j+X'_jV)}}{\sum^J_{l=1}e^{(\delta_l+X'_lV)}}dF(V|\alpha)dV
+$$
+mas pode ser estimada pelo market share $S_j = Q_j/M$ quando os $M$ indivíduos são muitos, segundo a Lei Fraca dos Grandes Números.
