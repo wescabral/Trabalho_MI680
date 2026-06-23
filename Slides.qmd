@@ -16,10 +16,11 @@ format:
     slide-level: 2
     fontsize: 30px
     embed-resources: true
+    code-fold: true
 
 execute:
   echo: true
-  eval: true
+  eval: false
   output: true
 ---
 
@@ -223,15 +224,95 @@ $$
 
 ## Aplicação 1
 
+- `ModeCanada` é um conjunto de dados de uma companhia ferroviária no Canadá.
+- Frank Koppelman tem artigos sobre esse conjunto de dados.
+- Variáveis:
+  - case: Passageiro.
+  - alt: Modo de transporte (train, air, bus, car).
+  - choice: Se o modo de transporte foi escolhido (binária).
+  - dist: Distância da viagem (quilômetros).
+  - cost: Custo da viagem (dólares canadenses).
+  - ivt: Tempo de viagem no veículo (minutos).
+  - income: Renda (categorias).
+  - urban: Se a partida ou destino é uma cidade grande (binária).
+
+---
+
 ::: {.panel-tabset}
-### R
+### Dados
 ```{r}
-print("Hello, World!")
+#| eval: true
+data <- read.csv("ModeCanada.csv")
+
+modes <- unique(data$alt)
+keep_cases <- with(data, tapply(alt, case, function(x) all(modes %in% x)))
+data <- subset(data, case %in% names(keep_cases)[keep_cases])
+
+head(data, 10)
 ```
 
-### Julia
-```{julia}
-println("Hello, World!")
+### Conditional Logit
+```{r}
+library(mlogit)
+mlogit_data <- mlogit.data(
+  data,
+  choice = "choice",
+  shape = "long",
+  chid.var = "case",
+  alt.var = "alt"
+)
+
+conditional <- mlogit(
+  choice ~ cost + ivt | income + urban,
+  data = mlogit_data,
+  reflevel = "train"
+)
+summary(conditional)
+```
+```{r}
+#| eval: true
+#| echo: false
+load("aplicacao1.RData")
+library(mlogit)
+summary(conditional)
+```
+
+### Nested Logit
+```{r}
+nested <- mlogit(
+  choice ~ cost + ivt | income + urban,
+  data = mlogit_data,
+  reflevel = "train",
+  nests = list(
+    group1 = c("car", "air"),
+    group2  = c("train", "bus")
+  )
+)
+summary(nested)
+```
+```{r}
+#| eval: true
+#| echo: false
+summary(nested)
+```
+
+### Mixed Logit
+```{r}
+mixed <- mlogit(
+  choice ~ cost + ivt | income + urban,
+  data = mlogit_data,
+  reflevel = "train",
+  rpar = c(ivt = "n"),
+  R = 500,
+  halton = NA,
+  panel = FALSE
+)
+summary(mixed)
+```
+```{r}
+#| eval: true
+#| echo: false
+summary(mixed)
 ```
 :::
 
@@ -267,20 +348,6 @@ $$
 onde $(\epsilon_{1}, \dots, \epsilon_{J})$ tem distribuição $\mathcal{N}(0, \Sigma)$.
 - As probabilidades de respostas involvem integrais complexas, e integrais numéricas são computacionalmente intensos.
 - O simulador de máxima verossimilhança GHK (Geweke, Hajivassiliou, and Keane) é uma das alternativas para encontrar estimativas dos parâmetros.
-
-## Aplicação 2
-
-::: {.panel-tabset}
-### R
-```{r}
-print("Hello, World!")
-```
-
-### Julia
-```{julia}
-println("Hello, World!")
-```
-:::
 
 
 
