@@ -366,3 +366,150 @@ $$
 P_j(\delta, \alpha) = \int \frac{e^{(\delta_j+X'_jV)}}{\sum^J_{l=1}e^{(\delta_l+X'_lV)}}dF(V|\alpha)dV
 $$
 mas pode ser estimada pelo market share $S_j = Q_j/M$ quando os $M$ indivíduos são muitos, segundo a Lei Fraca dos Grandes Números.
+
+
+## Aplicação 2
+
+::: {.panel-tabset}
+:::
+
+### Julia
+
+```{julia}
+import Pkg
+Pkg.add("DataFrames")
+Pkg.add("Turing")   
+Pkg.add("Optim")  
+Pkg.add("Distributions") 
+Pkg.add("LinearAlgebra")
+Pkg.add("Random")
+Pkg.add("CSV")
+```
+
+
+```{julia, echo = FALSE}
+using DataFrames, Optim, Distributions, LinearAlgebra, Turing, Random, CSV
+
+koppelman = CSV.read("Koppelman.txt", DataFrame, 
+              delim='\t', 
+              quotechar='"', 
+              stripwhitespace=true)
+
+mode_map = Dict("train" => 1, "air" => 2, "bus" => 3, "car" => 4)
+koppelman.alt_idx = [mode_map[a] for a in koppelman.alternative]
+```
+
+```{julia}
+gdf = groupby(koppelman, :case)
+N_casos = length(gdf)
+
+# Objetos para o Turing
+cost_mat   = zeros(Float64, N_casos, 4)
+intime_mat = zeros(Float64, N_casos, 4)
+income_vec = zeros(Float64, N_casos)
+urban_vec  = zeros(Float64, N_casos)
+y_vec      = zeros(Int, N_casos)
+
+for (i, sub_df) in enumerate(gdf)
+    # Variáveis socioeconômicas (são iguais para todas as alternativas daquele caso)
+    income_vec[i] = sub_df.income[1]
+    urban_vec[i]  = sub_df.urban[1]
+    
+    # Preenche os atributos específicos de cada uma das 4 alternativas
+    for row in eachrow(sub_df)
+        alt = row.alt_idx
+        cost_mat[i, alt]   = row.cost
+        intime_mat[i, alt] = row.intime
+        
+        # Se 'choice == 1', salvamos qual foi a alternativa escolhida
+        if row.choice == 1
+            y_vec[i] = alt
+        end
+    end
+end
+```
+
+
+```{julia}
+function mnp_loglikelihood(params, cost, intime, income, urban, y; S=200)
+    N = length(y)
+    
+    # Extração dos parâmetros do vetor contínuo do Optim
+    b_cost   = params[1]
+    b_intime = params[2]
+    
+    # Air (Alt 2)
+    a_air = params[3]; b_inc_air = params[4]; b_urb_air = params[5]
+    # Bus (Alt 3)
+    a_bus = params[6]; b_inc_bus = params[7]; b_urb_bus = params[8]
+    # Car (Alt 4)
+    a_car = params[9]; b_inc_car = params[10]; b_urb_car = params[11]
+    
+    total_loglik = 0.0
+    
+    # Sorteio de erros normais padrão para a simulação de Monte Carlo
+    # Probit assume erros normais independentes (variância = 1.0)
+    Random.seed!(123)
+    errors = randn(N, 4, S)
+    
+    for i in 1:N
+        chosen = y[i]
+        sim_success = 0
+        
+        # Atributos fixos daquela linha/indivíduo
+        inc = income[i]
+        urb = urban[i]
+        
+        for s in 1:S
+            # Cálculo das utilidades determinísticas + erro sorteado
+            u1 = b_cost * cost[i, 1] + b_intime * intime[i, 1] + errors[i, 1, s] # Train (Base)
+            u2 = a_air + b_inc_air*inc + b_urb_air*urb + b_cost*cost[i, 2] + b_intime*intime[i, 2] + errors[i, 2, s]
+            u3 = a_bus + b_inc_bus*inc + b_urb_bus*urb + b_cost*cost[i, 3] + b_intime*intime[i, 3] + errors[i, 3, s]
+            u4 = a_car + b_inc_car*inc + b_urb_car*urb + b_cost*cost[i, 4] + b_intime*intime[i, 4] + errors[i, 4, s]
+            
+            # Se a alternativa com maior utilidade foi a que o indivíduo escolheu na realidade
+            if argmax([u1, u2, u3, u4]) == chosen
+                sim_success += 1
+            end
+        end
+        
+        # Suavização para evitar log(0) caso nenhuma simulação acerte
+        prob = max(sim_success / S, 1e-6)
+        total_loglik += log(prob)
+    end
+    
+    # Retorna o negativo porque o Optim minimiza funções
+    return -total_loglik
+end
+```
+
+
+
+
+```{julia}
+# Chute inicial para os 11 parâmetros (todos zerados)
+initial_guess = zeros(11)
+
+println("Otimizando parâmetros via Máxima Verossimilhança (MNE)...")
+res = optimize(
+    p -> mnp_loglikelihood(p, cost_mat, intime_mat, income_vec, urban_vec, y_vec), 
+    initial_guess, 
+    BFGS(), # Algoritmo robusto livre de derivadas
+    Optim.Options(iterations=500, show_trace=true)
+)
+
+# Coeficientes estimados
+estimated_coefficients = Optim.minimizer(res)
+
+println("\n--- RESULTADOS FINAIS MNP ---")
+labels = [
+    "Beta Cost", "Beta Intime",
+    "Air: Constant", "Air: Income", "Air: Urban",
+    "Bus: Constant", "Bus: Income", "Bus: Urban",
+    "Car: Constant", "Car: Income", "Car: Urban"
+]
+
+for (lbl, val) in zip(labels, estimated_coefficients)
+    println(lpad(lbl, 20), ": ", round(val, digits=4))
+end
+```
