@@ -385,27 +385,27 @@ MC <- mlogit.data(ModeCanada, choice = "choice", shape = "long",
                   alt.var = "alt", chid.var = "case")
 
 probit_model <- mlogit(choice ~ cost + ivt | income + urban,
-                       data = MC, prob = TRUE, R = 200, halton = NA)
+                       data = MC, prob = TRUE)
 
 MC$logcost   <- log(MC$cost)
 MC$logintime <- log(MC$ivt)
 
 probit_model_log <- mlogit(choice ~ logcost + logintime | income + urban,
-                         data = MC, prob = TRUE, R = 200, halton = NA)
+                         data = MC, prob = TRUE)
 
 coefs <- summary(probit_model)$CoefTable
 coefs_log <- summary(probit_model_log)$CoefTable
 
 results <- data.frame(
   Variable = rownames(coefs),
-  Estimate_a = round(coefs[,1], 4),
-  StdError_a = round(coefs[,2], 4),
-  Estimate_b = round(coefs_log[rownames(coefs),1], 4),
-  StdError_b = round(coefs_log[rownames(coefs),2], 4)
+  Estimate = round(coefs[,1], 4),
+  StdError = round(coefs[,2], 4),
+  Estimate_log = round(coefs_log[,1], 4),
+  StdError_log = round(coefs_log[,2], 4)
 )
 
-ll <- as.numeric(logLik(probit_model_a))
-ll_log <- as.numeric(logLik(probit_model_b))
+ll <- as.numeric(logLik(probit_model))
+ll_log <- as.numeric(logLik(probit_model_log))
 
 print(results)
 cat("\nLog likelihood:", ll, "\n")
