@@ -370,8 +370,50 @@ mas pode ser estimada pelo market share $S_j = Q_j/M$ quando os $M$ indivíduos 
 
 ## Aplicação 2
 
+
+
+
 ::: {.panel-tabset}
-:::
+
+### R
+```{r}
+library(mlogit)
+
+data("ModeCanada", package = "mlogit")
+
+MC <- mlogit.data(ModeCanada, choice = "choice", shape = "long",
+                  alt.var = "alt", chid.var = "case")
+
+probit_model <- mlogit(choice ~ cost + ivt | income + urban,
+                       data = MC, prob = TRUE, R = 200, halton = NA)
+
+MC$logcost   <- log(MC$cost)
+MC$logintime <- log(MC$ivt)
+
+probit_model_log <- mlogit(choice ~ logcost + logintime | income + urban,
+                         data = MC, prob = TRUE, R = 200, halton = NA)
+
+coefs <- summary(probit_model)$CoefTable
+coefs_log <- summary(probit_model_log)$CoefTable
+
+results <- data.frame(
+  Variable = rownames(coefs),
+  Estimate_a = round(coefs[,1], 4),
+  StdError_a = round(coefs[,2], 4),
+  Estimate_b = round(coefs_log[rownames(coefs),1], 4),
+  StdError_b = round(coefs_log[rownames(coefs),2], 4)
+)
+
+ll <- as.numeric(logLik(probit_model_a))
+ll_log <- as.numeric(logLik(probit_model_b))
+
+print(results)
+cat("\nLog likelihood:", ll, "\n")
+cat("Log likelihood (modelo log):", ll_log, "\n")
+```
+
+
+
 
 ### Julia
 
@@ -386,6 +428,7 @@ Pkg.add("Random")
 Pkg.add("CSV")
 ```
 
+:::
 
 ```{julia, echo = FALSE}
 using DataFrames, Optim, Distributions, LinearAlgebra, Turing, Random, CSV
@@ -427,58 +470,43 @@ for (i, sub_df) in enumerate(gdf)
         end
     end
 end
+
+logcost_mat   = log.(cost_mat .+ 1e-6)   # evitar log(0)
+logintime_mat = log.(intime_mat .+ 1e-6)
 ```
 
 
 ```{julia}
-function mnp_loglikelihood(params, cost, intime, income, urban, y; S=200)
+function mnp_loglikelihood_log(params, logcost, logintime, income, urban, y; S=200)
     N = length(y)
-    
-    # Extração dos parâmetros do vetor contínuo do Optim
     b_cost   = params[1]
     b_intime = params[2]
-    
-    # Air (Alt 2)
     a_air = params[3]; b_inc_air = params[4]; b_urb_air = params[5]
-    # Bus (Alt 3)
     a_bus = params[6]; b_inc_bus = params[7]; b_urb_bus = params[8]
-    # Car (Alt 4)
     a_car = params[9]; b_inc_car = params[10]; b_urb_car = params[11]
-    
+
     total_loglik = 0.0
-    
-    # Sorteio de erros normais padrão para a simulação de Monte Carlo
-    # Probit assume erros normais independentes (variância = 1.0)
     Random.seed!(123)
     errors = randn(N, 4, S)
-    
+
     for i in 1:N
         chosen = y[i]
         sim_success = 0
-        
-        # Atributos fixos daquela linha/indivíduo
-        inc = income[i]
-        urb = urban[i]
-        
+        inc = income[i]; urb = urban[i]
+
         for s in 1:S
-            # Cálculo das utilidades determinísticas + erro sorteado
-            u1 = b_cost * cost[i, 1] + b_intime * intime[i, 1] + errors[i, 1, s] # Train (Base)
-            u2 = a_air + b_inc_air*inc + b_urb_air*urb + b_cost*cost[i, 2] + b_intime*intime[i, 2] + errors[i, 2, s]
-            u3 = a_bus + b_inc_bus*inc + b_urb_bus*urb + b_cost*cost[i, 3] + b_intime*intime[i, 3] + errors[i, 3, s]
-            u4 = a_car + b_inc_car*inc + b_urb_car*urb + b_cost*cost[i, 4] + b_intime*intime[i, 4] + errors[i, 4, s]
-            
-            # Se a alternativa com maior utilidade foi a que o indivíduo escolheu na realidade
-            if argmax([u1, u2, u3, u4]) == chosen
+            u1 = b_cost*logcost[i,1] + b_intime*logintime[i,1] + errors[i,1,s]
+            u2 = a_air + b_inc_air*inc + b_urb_air*urb + b_cost*logcost[i,2] + b_intime*logintime[i,2] + errors[i,2,s]
+            u3 = a_bus + b_inc_bus*inc + b_urb_bus*urb + b_cost*logcost[i,3] + b_intime*logintime[i,3] + errors[i,3,s]
+            u4 = a_car + b_inc_car*inc + b_urb_car*urb + b_cost*logcost[i,4] + b_intime*logintime[i,4] + errors[i,4,s]
+
+            if argmax((u1,u2,u3,u4)) == chosen
                 sim_success += 1
             end
         end
-        
-        # Suavização para evitar log(0) caso nenhuma simulação acerte
         prob = max(sim_success / S, 1e-6)
         total_loglik += log(prob)
     end
-    
-    # Retorna o negativo porque o Optim minimiza funções
     return -total_loglik
 end
 ```
@@ -498,18 +526,32 @@ res = optimize(
     Optim.Options(iterations=500, show_trace=true)
 )
 
+res_log = optimize(
+    p -> mnp_loglikelihood_log(p, logcost_mat, logintime_mat, income_vec, urban_vec, y_vec),
+    initial_guess,
+    BFGS(),
+    Optim.Options(iterations=500, show_trace=true)
+)
+
 # Coeficientes estimados
 estimated_coefficients = Optim.minimizer(res)
+estimated_coefficients_log = Optim.minimizer(res_log)
 
-println("\n--- RESULTADOS FINAIS MNP ---")
+
 labels = [
-    "Beta Cost", "Beta Intime",
+    "Beta Cost/LogCost", "Beta Intime/LogIntime",
     "Air: Constant", "Air: Income", "Air: Urban",
     "Bus: Constant", "Bus: Income", "Bus: Urban",
     "Car: Constant", "Car: Income", "Car: Urban"
 ]
 
-for (lbl, val) in zip(labels, estimated_coefficients)
-    println(lpad(lbl, 20), ": ", round(val, digits=4))
+println("\n--- COMPARAÇÃO MNP ---")
+for (lbl, val_a, val_b) in zip(labels, estimated_coefficients, estimated_coefficients_log)
+    println(rpad(lbl, 20), ": ",
+            round(val_a, digits=4), "   |   ",
+            round(val_b, digits=4))
 end
+
+println("\nLog-likelihood: ", -Optim.minimum(res))
+println("Log-likelihood (modelo log): ", -Optim.minimum(res_log))
 ```
