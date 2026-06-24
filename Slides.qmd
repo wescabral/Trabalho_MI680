@@ -34,7 +34,7 @@ execute:
 $$
 P_{j}(x) = \mathbb{P}[Y=j | X=x].
 $$
-- A resposta multinomial é motiva o Modelo de Utilidade Latente.
+- A resposta multinomial motiva a utilização do Modelo de Utilidade Latente.
 
 ## Modelo de Utilidade Latente
 
@@ -479,39 +479,5 @@ cat("Log likelihood (modelo log):", ll_log, "\n")
 ```
 
 
-
-```{=latex}
-
-\begin{table}[ht]
-\centering
-\caption{Comparação dos resultados MNP em R e aproximação em Julia}
-\begin{tabular}{lrrrr}
-\hline
-\textbf{Variável} & \textbf{R Linear} & \textbf{R Log} & \textbf{Julia Linear} & \textbf{Julia Log} \\
-\hline
-Air Constant      & 0.1928 &  2.2455 &  0.4287 & -1.5292 \\
-Bus Constant      & -0.0972 & -4.5415 & -1.6098 &  0.8719 \\
-Car Constant      & 0.7777 &  1.0013 & -0.0006 &  1.1846 \\
-Cost              & -0.0013 & -2.3434 & -0.0257 &  0.9035 \\
-Intime            & -0.0022 &  0.0275 & -0.0088 &  0.1416 \\
-Air Income        & 0.0147 &  0.0189 &  0.0179 &  0.0099 \\
-Bus Income        & 0.0026 & -0.0222 & -0.0347 & -0.0969 \\
-Car Income        & 0.0124 &  0.0126 &  0.0260 & -0.0026 \\
-Air Urban         & -0.2495 & -0.0677 & -0.0588 &  0.6996 \\
-Bus Urban         & -0.1734 &  0.0222 &  0.1709 &  0.8692 \\
-Car Urban         & -0.4103 & -0.6010 & -0.4929 & -0.7658 \\
-Air-Bus Corr.     & 0.6808 & -0.3806 &   ---   &   ---   \\
-Air-Car Corr.     & 1.1122 &  1.4263 &   ---   &   ---   \\
-Bus-Bus Corr.     & 0.3878 &  1.5435 &   ---   &   ---   \\
-Bus-Car Corr.     & -0.0753 & -0.2209 &   ---   &   ---   \\
-Car-Car Corr.     & 0.1657 &  0.6347 &   ---   &   ---   \\
-\hline
-\multicolumn{5}{l}{Log-likelihood R (Linear): -3145.36} \\
-\multicolumn{5}{l}{Log-likelihood R (Log): -3057.97} \\
-\multicolumn{5}{l}{Log-likelihood Julia (Linear): -2292.16} \\
-\multicolumn{5}{l}{Log-likelihood Julia (Log): -3100.75} \\
-\hline
-\end{tabular}
-\end{table}
-```
-
+## Aplicação 2
+![](tabelaap2.png.png)
