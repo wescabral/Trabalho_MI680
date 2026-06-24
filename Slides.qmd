@@ -437,11 +437,6 @@ mas pode ser estimada pelo market share $S_j = Q_j/M$ quando os $M$ indivíduos 
 
 ## Aplicação 2
 
-
-
-
-::: {.panel-tabset}
-### R
 ```{r}
 library(mlogit)
 
@@ -478,6 +473,4 @@ cat("\nLog likelihood:", ll, "\n")
 cat("Log likelihood (modelo log):", ll_log, "\n")
 ```
 
-
-## Aplicação 2
-![](tabelaap2.png.png)
+![](tabelaap2.png)
