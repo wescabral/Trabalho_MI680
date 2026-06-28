@@ -194,7 +194,6 @@ $$
 U_{j}^{*} = W^{'} \beta_{j} + X_{j}^{'} \eta + \epsilon_{j},
 $$
 onde $\eta$ é uma variável aleatória com distribuição $F(\eta | \alpha)$.
-- Permite que as variáveis sejam heterogêneos entre diferentes indivíduos.
 - As escolhas das distribuições mais comuns são: $\mathcal{N}(\gamma, D)$ (matriz de covariância diagonal), $\mathcal{N}(\gamma, \Sigma)$ e Log-Normal.
 - Observação: É possível simplificar o modelo dividindo $X_{j}^{'}$ em variáveis sem e com o coeficiente aleatório.
 
@@ -314,6 +313,30 @@ summary(mixed)
 #| echo: false
 summary(mixed)
 ```
+
+### Livro (Stata)
+
+::: {style="max-height:500px; overflow-y:auto;"}
+|     | Variable           | Conditional Logit | Nested Logit   | Mixed Logit     |
+|:----|:-------------------|------------------:|---------------:|----------------:|
+|     | Cost               | -0.022 (0.003)    | -0.011 (0.002) | -0.023 (0.004)  |
+|     | Intime             | -0.015 (0.001)    | -0.005 (0.001) | -0.014 (0.001)  |
+|     | $\sigma$(Intime)   |                   |                | 0.0048 (0.0011) |
+| Air | Income             | 0.036 (0.004)     | 0.024 (0.003)  | 0.040 (0.004)   |
+|     | Urban              | 0.29 (0.09)       | 0.28 (0.09)    | 0.35 (0.11)     |
+|     | Constant           | -2.15 (0.45)      | -0.46 (0.35)   | -2.72 (0.53)    |
+| Bus | Income             | -0.051 (0.018)    | -0.049 (0.018) | -0.050 (0.018)  |
+|     | Urban              | -0.23 (0.44)      | -0.21 (0.45)   | -0.24 (0.44)    |
+|     | Constant           | -1.79 (0.79)      | -1.55 (0.77)   | -1.82 (0.79)    |
+| Car | Income             | 0.008 (0.003)     | 0.017 (0.003)  | 0.008 (0.003)   |
+|     | Urban              | -0.99 (0.09)      | -0.58 (0.08)   | -1.01 (0.09)    |
+|     | Constant           | 1.86 (0.19)       | 1.19 (0.17)    | 1.89 (0.19)     |
+|     | $\tau$(Car, Air)   |                   | 0.24 (0.05)    |                 |
+|     | $\tau$(Train, Bus) |                   | 1.00 (NA)      |                 |
+|     | Log Likelihood     | -2100.6           | -2044.4        | -2095.5         |
+
+: Tabela 26.1 do Livro (Stata)
+:::
 :::
 
 # Modelo Probit
