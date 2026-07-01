@@ -1,124 +1,47 @@
-### Julia
+using Pkg
+Pkg.add([
+    "DiscreteChoiceModels", "CSV", "DataFrames"])
+    
+using DiscreteChoiceModels, CSV, DataFrames
 
-import Pkg
-Pkg.add("DataFrames")
-Pkg.add("Turing")   
-Pkg.add("Optim")  
-Pkg.add("Distributions") 
-Pkg.add("LinearAlgebra")
-Pkg.add("Random")
-Pkg.add("CSV")
-
-using DataFrames, Optim, Distributions, LinearAlgebra, Turing, Random, CSV
-
-koppelman = CSV.read("Koppelman.txt", DataFrame, 
+# 1. Carrega o dataset idêntico ao do mlogit no R
+df = CSV.read("Koppelman.txt", DataFrame, 
               delim='\t', 
               quotechar='"', 
               stripwhitespace=true)
 
-mode_map = Dict("train" => 1, "air" => 2, "bus" => 3, "car" => 4)
-koppelman.alt_idx = [mode_map[a] for a in koppelman.alternative]
+df.choice_bin = [x == "yes" ? 1.0 : 0.0 for x in df.choice]
 
-gdf = groupby(koppelman, :case)
-N_casos = length(gdf)
+df_fixed = unique(df[:, [:case, :distance, :income, :urban]], :case)
 
-# Objetos para o Turing
-cost_mat   = zeros(Float64, N_casos, 4)
-intime_mat = zeros(Float64, N_casos, 4)
-income_vec = zeros(Float64, N_casos)
-urban_vec  = zeros(Float64, N_casos)
-y_vec      = zeros(Int, N_casos)
+df_wide_cost   = unstack(df, :case, :alternative, :cost, renamecols=x -> "cost_" * x)
+df_wide_intime = unstack(df, :case, :alternative, :intime, renamecols=x -> "intime_" * x)
 
-for (i, sub_df) in enumerate(gdf)
-    # Variáveis socioeconômicas (são iguais para todas as alternativas daquele caso)
-    income_vec[i] = sub_df.income[1]
-    urban_vec[i]  = sub_df.urban[1]
-    
-    # Preenche os atributos específicos de cada uma das 4 alternativas
-    for row in eachrow(sub_df)
-        alt = row.alt_idx
-        cost_mat[i, alt]   = row.cost
-        intime_mat[i, alt] = row.intime
+df_choice = filter(row -> row.choice == 1, df)[:, [:case, :alternative]]
+rename!(df_choice, :alternative => :choice)
+
+df_final = innerjoin(df_fixed, df_wide_cost, df_wide_intime, df_choice, on=:case)
+
+modelo_canada_socio = multinomial_logit(
+    @utility(begin
+        # Utilidades
+        "air"   ~ α_air   + β_cost * cost_air   + β_intime * intime_air   + β_inc_air   * income + β_urb_air   * urban
+        "train" ~ α_train + β_cost * cost_train + β_intime * intime_train + β_inc_train * income + β_urb_train * urban
+        "bus"   ~ α_bus   + β_cost * cost_bus   + β_intime * intime_bus   + β_inc_bus   * income + β_urb_bus   * urban
+        "car"   ~ α_car   + β_cost * cost_car   + β_intime * intime_car   + β_inc_car   * income + β_urb_car   * urban
         
-        # Se 'choice == 1', salvamos qual foi a alternativa escolhida
-        if row.choice == 1
-            y_vec[i] = alt
-        end
-    end
-end
-
-logcost_mat   = log.(cost_mat .+ 1e-6)   # evitar log(0)
-logintime_mat = log.(intime_mat .+ 1e-6)
-
-function mnp_loglikelihood_log(params, logcost, logintime, income, urban, y; S=200)
-    N = length(y)
-    b_cost   = params[1]
-    b_intime = params[2]
-    a_air = params[3]; b_inc_air = params[4]; b_urb_air = params[5]
-    a_bus = params[6]; b_inc_bus = params[7]; b_urb_bus = params[8]
-    a_car = params[9]; b_inc_car = params[10]; b_urb_car = params[11]
-
-    total_loglik = 0.0
-    Random.seed!(123)
-    errors = randn(N, 4, S)
-
-    for i in 1:N
-        chosen = y[i]
-        sim_success = 0
-        inc = income[i]; urb = urban[i]
-
-        for s in 1:S
-            u1 = b_cost*logcost[i,1] + b_intime*logintime[i,1] + errors[i,1,s]
-            u2 = a_air + b_inc_air*inc + b_urb_air*urb + b_cost*logcost[i,2] + b_intime*logintime[i,2] + errors[i,2,s]
-            u3 = a_bus + b_inc_bus*inc + b_urb_bus*urb + b_cost*logcost[i,3] + b_intime*logintime[i,3] + errors[i,3,s]
-            u4 = a_car + b_inc_car*inc + b_urb_car*urb + b_cost*logcost[i,4] + b_intime*logintime[i,4] + errors[i,4,s]
-
-            if argmax((u1,u2,u3,u4)) == chosen
-                sim_success += 1
-            end
-        end
-        prob = max(sim_success / S, 1e-6)
-        total_loglik += log(prob)
-    end
-    return -total_loglik
-end
-
-# Chute inicial para os 11 parâmetros (todos zerados)
-initial_guess = zeros(11)
-
-println("Otimizando parâmetros via Máxima Verossimilhança (MNE)...")
-res = optimize(
-    p -> mnp_loglikelihood(p, cost_mat, intime_mat, income_vec, urban_vec, y_vec), 
-    initial_guess, 
-    BFGS(), # Algoritmo robusto livre de derivadas
-    Optim.Options(iterations=500, show_trace=true)
+        # Fixando Train como ref
+        α_train     = 0, fixed
+        β_inc_train = 0, fixed
+        β_urb_train = 0, fixed
+    end),
+    :choice, 
+    df_final
 )
 
-res_log = optimize(
-    p -> mnp_loglikelihood_log(p, logcost_mat, logintime_mat, income_vec, urban_vec, y_vec),
-    initial_guess,
-    BFGS(),
-    Optim.Options(iterations=500, show_trace=true)
+resultados = DataFrame(
+    Parametro = String.(modelo_canada_socio.coefnames),
+    Estimativa = vec(modelo_canada_socio.coefs),
+    Erro_Padrao = sqrt.(diag(modelo_canada_socio.vcov))
 )
 
-# Coeficientes estimados
-estimated_coefficients = Optim.minimizer(res)
-estimated_coefficients_log = Optim.minimizer(res_log)
-
-
-labels = [
-    "Beta Cost/LogCost", "Beta Intime/LogIntime",
-    "Air: Constant", "Air: Income", "Air: Urban",
-    "Bus: Constant", "Bus: Income", "Bus: Urban",
-    "Car: Constant", "Car: Income", "Car: Urban"
-]
-
-println("\n--- COMPARAÇÃO MNP ---")
-for (lbl, val_a, val_b) in zip(labels, estimated_coefficients, estimated_coefficients_log)
-    println(rpad(lbl, 20), ": ",
-            round(val_a, digits=4), "   |   ",
-            round(val_b, digits=4))
-end
-
-println("\nLog-likelihood: ", -Optim.minimum(res))
-println("Log-likelihood (modelo log): ", -Optim.minimum(res_log))
