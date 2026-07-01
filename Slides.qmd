@@ -499,9 +499,9 @@ cat("Log likelihood (modelo log):", ll_log, "\n")
 ```{r}
 #| eval: true
 #| echo: false
-load("aplicacao2.RData")
-load("ll_aplicacao2.RData")
-load("lllog_aplicacao2.RData")
+load("aplicacao2.Rdata")
+load("ll_aplicacao2.Rdata")
+load("lllog_aplicacao2.Rdata")
 results
 cat("\nLog likelihood:", ll, "\n")
 cat("Log likelihood (modelo log):", ll_log, "\n")
@@ -558,4 +558,5 @@ resultados = DataFrame(
     Erro_Padrao = sqrt.(diag(modelo_canada_socio.vcov))
 )
 ```
+
 ![](tabelaap2.png)
